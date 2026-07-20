@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import ModalLayout from './ModalLayout';
-import { FaCheck } from 'react-icons/fa';
+import { FaCheck, FaTimes } from 'react-icons/fa';
 import { useDispatch } from 'react-redux';
 import axiosInstance from '../../util/AxiosInstance';
 
@@ -27,11 +27,17 @@ export default function PairAgentModal({ onDone, onSkip }) {
             await axiosInstance.patch('/localAgent/pair', formData);
             setStep('success');
         }catch (err) {
-            setError(err.response?.data?.message || 'Failed to pair device. Please checkt the code and try again.');
+            setError(err.response?.data?.message || 'The pair code is incorrect');
+            setStep('failed');
         } finally {
             setSubmitting(false);
         }
     };
+
+    const handleRetry = () => {
+        setError('');
+        setStep('form');
+    }
 
     if (step === 'success') {
         return (
@@ -54,6 +60,32 @@ export default function PairAgentModal({ onDone, onSkip }) {
                     style={{ backgroundColor: '#8b7ff0', color: '#fff', borderRadius: '10px', padding: '10px' }}
                 >
                     Done
+                </button>
+            </ModalLayout>
+        );
+    }
+
+    if (step === 'failed') {
+        return (
+            <ModalLayout hideClose>
+                <div className='d-flex justify-content-center mb-4'>
+                    <div style={{
+                        width: '70px', height: '70px', borderRadius: '50%',
+                        backgroundColor: '#e8433c', display: 'flex',
+                        alignItems: 'center', justifyContent: 'center'
+                    }}>
+                        <FaTimes style={{ color: '#fff', fontSize: '28px' }} />
+                    </div>
+                </div>
+                <div style={{ fontWeight: 700, fontSize: '16px' }} className='mb-4'>
+                    {error || 'The pair code is incorrect'}
+                </div>
+                <button
+                    onClick={handleRetry}
+                    className='btn w-100'
+                    style={{ backgroundColor: '#8b7ff0', color: '#fff', borderRadius: '10px', padding: '10px' }}
+                >
+                    Retry
                 </button>
             </ModalLayout>
         );
