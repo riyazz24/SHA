@@ -42,8 +42,7 @@ export default function SidePanel({ activePage }) {
     }, [navigate, sessionId]);
 
     const menuItems = [
-        { to: '/dashboard', icon: <MdHome className="me-2" />, label: 'Dashboard', page: 'Dashboard' },
-        { to: '/agent', icon: <MdSmartToy className="me-2" />, label: 'Agent', page: 'Agent'},
+        { to: '/agent', icon: <MdHome className="me-2" />, label: 'Agent', page: 'Agent' },
         { to: `/room/${firstRoomName}`, icon: <FaDoorOpen className="me-2" />, label: 'Rooms', page: 'Rooms' },
         { to: '/devices/all_devices', icon: <MdDevices className="me-2" />, label: 'Devices', page: 'Devices' },
         { to: '/schedule/your_schedule', icon: <MdSchedule className="me-2" />, label: 'Schedule', page: 'Schedule' },

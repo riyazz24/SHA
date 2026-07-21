@@ -33,7 +33,6 @@ export default function ProfileContent() {
     const dispatch = useDispatch();
 
     const formField = [
-        { name: 'name', id: 'name', type: 'text', label: 'Name', autoComplete: 'name' },
         { name: 'contactNumber', id: 'contact', type: 'tel', label: 'Contact Number', autoComplete: 'tel' },
         { name: 'email', id: 'email', type: 'email', label: 'Email', autoComplete: 'email' }
     ];
@@ -49,7 +48,7 @@ export default function ProfileContent() {
             try {
                 const { data, status } = await axiosInstance.get('/user/profile');
                 if (status === 200) {
-                    setFormData({ name: data.name || '', email: data.email || '', contactNumber: data.contactNumber || '' });
+                    setFormData({ email: data.email || '', contactNumber: data.contactNumber || '' });
                 }
             } catch (err) {
                 const errorMessage = err.response?.data?.message || 'Profile fetch failed';

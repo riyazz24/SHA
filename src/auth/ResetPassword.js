@@ -57,7 +57,7 @@ export default function ResetPassword() {
                     show: true,
                     title: 'Success',
                     message: data.message,
-                    isError: false,
+                    isError: false,       
                     onConfirm: () => {
                         setModal({ ...modal, show: false });
                         navigate('/');

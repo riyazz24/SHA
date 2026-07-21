@@ -9,8 +9,6 @@ import OtpVerify from './auth/OtpVerify';
 import ResetPassword from './auth/ResetPassword';
 import RoomsLayout from './components/layout/RoomsLayout';
 import RoomsContent from './components/content/RoomsContent';
-import AgentLayout from './components/layout/AgentLayout';
-import AgentContent from './components/content/AgentContent';
 import ScheduleLayout from './components/layout/ScheduleLayout';
 import YourScenesContent from './components/content/YourScenesContent';
 import CreateScenesContent from './components/content/CreateScenesContent';
@@ -39,10 +37,10 @@ function App() {
             <Route path='/reset/password' element={<ResetPassword />} />
 
             {/* Home */}
-            <Route path='/dashboard' element={<DashboardLayout InsideContent={DashboardContent} />} />
+            <Route path='/agent' element={<DashboardLayout InsideContent={DashboardContent} />} />
 
             {/* Agent */}
-            <Route path='/agent' element={<AgentLayout InsideContent={AgentContent} />} />
+            {/* <Route path='/agent' element={<AgentLayout InsideContent={AgentContent} />} /> */}
 
             {/* Dynamic Room */}
             <Route path='/room/:roomName' element={<DynamicRoom />} />
@@ -77,12 +75,14 @@ function DynamicRoom() {
   );
 }
 
-function DynamicAgent() {
-  const { agentName } = useParams();
-  const formattedAgentName = agentName.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-  return (
-    <AgentLayout agentName={formattedAgentName} InsideContent={(props) => <AgentContent {...props} agent={formattedAgentName} />} />
-  );
-}
+// function DynamicAgent() {
+//   const { agentName } = useParams();
+//   const formattedAgentName = agentName.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+//   return (
+//     <AgentLayout agentName={formattedAgentName} InsideContent={(props) => <AgentContent {...props} agent={formattedAgentName} />} />
+//   );
+// }
 
 export default App;
+
+ 

@@ -62,7 +62,7 @@ export default function Login() {
                     onConfirm: () => {
                         setModal({ ...modal, show: false });
                         setShowPairModal(true);
-                        navigate('/dashboard')
+                        navigate('/agent')
                     }
                 });
                 resetForm();

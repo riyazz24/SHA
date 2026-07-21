@@ -4,6 +4,8 @@ import { useSelector } from 'react-redux';
 import { FaLightbulb } from 'react-icons/fa';
 import axiosInstance from '../../util/AxiosInstance';
 import PairAgentModal from '../layout/PairAgentModal';
+import AgentOnlineImg from '../../assets/AgentOnlineImg.png';
+import AgentOfflineImg from '../../assets/AgentOfflineImg.png';
 
 export default function DashboardPage() {
     const [rooms, setRooms] = useState([]);
@@ -12,6 +14,16 @@ export default function DashboardPage() {
     const [showPairModal, setShowPairModal] = useState(false);
     const navigate = useNavigate();
     const userData = useSelector((state) => state.user);
+    const [ connectionStatus, setConnectionStatus] = useState(null);
+
+    const fetchAgentStatus = useCallback(async () => {
+        try {
+            const { data } = await axiosInstance.get('/localAgent/status');
+            setConnectionStatus(data.connectionStatus);
+        } catch (err) {
+            setConnectionStatus(null);
+        }
+    },[]);
 
     const checkAgentPairing = useCallback(async () => {
        try {
@@ -31,39 +43,39 @@ export default function DashboardPage() {
         checkAgentPairing();
     }, [checkAgentPairing]);
 
-     const fetchAgent = useCallback(async () => {
-        const sessionId = localStorage.getItem('sessionId');
-        if (!sessionId) {
-            navigate('/login');
-            return;
-        }
+    //  const fetchAgent = useCallback(async () => {
+    //     const sessionId = localStorage.getItem('sessionId');
+    //     if (!sessionId) {
+    //         navigate('/login');
+    //         return;
+    //     }
 
-        // try {
-        //     const { data, status } = await axiosInstance.get('/user/thing');
-        //     if (status === 200) {
-        //         const uniqueRooms = [];
-        //         const devicesList = data.things.map(thingsObj => {
-        //             const mainItem = thingsObj.items?.find(itemsObj => (
-        //                 itemsObj.type === 'Switch' || itemsObj.type === 'Color' || itemsObj.name?.toLowerCase().includes('wiz_bulb_color')));
-        //             if (!uniqueRooms.some(ref => ref.roomName === thingsObj.roomName)) {
-        //                 uniqueRooms.push({ id: thingsObj.roomId, roomName: thingsObj.roomName });
-        //             }
-        //             return {
-        //                 label: thingsObj.label,
-        //                 itemName: mainItem?.name,
-        //                 roomName: thingsObj.roomName,
-        //                 status: mainItem?.state === 'ON' || mainItem?.state !== '0,0,0'
-        //             };
-        //         });
-        //         setDevices(devicesList);
-        //         setRooms(uniqueRooms);
-        //     }
-        // } catch (err) {
-        //     setDevices([]);
-        //     setRooms([]);
-        //     console.error('Error fetching agent:', err.response?.data?.message || err.message);
-        // }
-    }, [navigate]);
+    //     try {
+    //         const { data, status } = await axiosInstance.get('/user/thing');
+    //         if (status === 200) {
+    //             const uniqueRooms = [];
+    //             const devicesList = data.things.map(thingsObj => {
+    //                 const mainItem = thingsObj.items?.find(itemsObj => (
+    //                     itemsObj.type === 'Switch' || itemsObj.type === 'Color' || itemsObj.name?.toLowerCase().includes('wiz_bulb_color')));
+    //                 if (!uniqueRooms.some(ref => ref.roomName === thingsObj.roomName)) {
+    //                     uniqueRooms.push({ id: thingsObj.roomId, roomName: thingsObj.roomName });
+    //                 }
+    //                 return {
+    //                     label: thingsObj.label,
+    //                     itemName: mainItem?.name,
+    //                     roomName: thingsObj.roomName,
+    //                     status: mainItem?.state === 'ON' || mainItem?.state !== '0,0,0'
+    //                 };
+    //             });
+    //             setDevices(devicesList);
+    //             setRooms(uniqueRooms);
+    //         }
+    //     } catch (err) {
+    //         setDevices([]);
+    //         setRooms([]);
+    //         console.error('Error fetching agent:', err.response?.data?.message || err.message);
+    //     }
+    // }, [navigate]);
 
     // useEffect(() => {
     //     fetchAgent();
@@ -71,24 +83,52 @@ export default function DashboardPage() {
     //     return () => clearInterval(intervalId);
     // }, [fetchAgent]);
 
-    const handleRoomChange = (e) => {
-        setSelectedRoom(e.target.value);
-    };
+    // const handleRoomChange = (e) => {
+    //     setSelectedRoom(e.target.value);
+    // };
 
-    const filteredDevices = selectedRoom ? devices.filter(ref => ref.roomName === selectedRoom) : devices;
+    // const filteredDevices = selectedRoom ? devices.filter(ref => ref.roomName === selectedRoom) : devices;
 
     return (
         <>
             <div className="container px-5 py-4">
+
+                {/* Agent Online/Offline Status Card */}
+                {connectionStatus && (
+                    <div className="bg-ffffff border rounded p-4 mb-4 d-flex justify-content-between align-items-start">
+                        <div style={{ fontWeight: '700', fontSize: '18px' }}>
+                            The Agent is {connectionStatus === 'LINKED' ? 'Online' : 'Offline'}
+                        </div>
+                        <span
+                            className="px-3 py-1 rounded-pill"
+                            style={{
+                                fontWeight: '600',
+                                fontSize: '13px',
+                                color: connectionStatus === 'LINKED' ? '#0a7a2f' : '#b30000',
+                                backgroundColor: connectionStatus === 'LINKED' ? '#d7f5df' : '#fbd6d6',
+                            }}
+                        >
+                            {connectionStatus === 'LINKED' ? 'Online' : 'Offline'}
+                        </span>
+                        <div className="w-100 d-flex justify-content-center mt-4">
+                            <img
+                                src={connectionStatus === 'LINKED' ? AgentOnlineImg : AgentOfflineImg}
+                                alt={connectionStatus === 'LINKED' ? 'Agent Online' : 'Agent Offline'}
+                                style={{ maxHeight: '160px' }}
+                            />
+                        </div>
+                    </div>
+                )}
+
                 {/* Greeting Banner */}
-                <div className="d-flex border-top border-start p-3 mb-5" style={{ minHeight: '160px', borderRadius: '10px', boxShadow: '2px 3px 10px rgba(0,0,0,0.2)' }}>
+                {/* <div className="d-flex border-top border-start p-3 mb-5" style={{ minHeight: '160px', borderRadius: '10px', boxShadow: '2px 3px 10px rgba(0,0,0,0.2)' }}>
                     <div className='px-3 py-2'>
                         <div className='mb-2' style={{ fontSize: '20px', fontWeight: '700', lineHeight: '100%', letterSpacing: '0%' }}>Hello, {userData.fullName}</div>
                         <div className="text-muted">Welcome home, air quality is good and Fresh. Take a walk and have coffee.</div>
                     </div>
                 </div>
 
-                {/* Home and Room Filter */}
+    
                 <div className="d-flex justify-content-between align-items-center mb-2">
                     <div style={{ fontSize: '18px', fontWeight: '600', lineHeight: '100%', letterSpacing: '0%' }}>{userData.fullName}'s Dashboard</div>
                     {filteredDevices.length !== 0 && (
@@ -103,7 +143,6 @@ export default function DashboardPage() {
                     )}
                 </div>
 
-                {/* Device Cards */}
                 {filteredDevices.length === 0 && (
                     <div className='alert text-center'>No devices found</div>
 
@@ -137,7 +176,7 @@ export default function DashboardPage() {
                             </div>
                         );
                     })}
-                </div>
+                </div> */}
             </div >
 
             {/* Closable, but reappears on next Dashboard visit until the user actually pairs an agent */}
