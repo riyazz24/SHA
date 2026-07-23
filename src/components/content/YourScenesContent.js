@@ -1,9 +1,50 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { FaRegLightbulb } from 'react-icons/fa';
 import { FiPower } from 'react-icons/fi';
 import axiosInstance from '../../util/AxiosInstance';
 import ModalLayout from '../layout/ModalLayout';
+
+// ---------------------------------------------------------------------------
+// MOCK DATA (placeholder only)
+// TODO(API): Replace with a real call once a rules/scenes endpoint exists on
+// the backend (e.g. GET /user/rule). Remove MOCK_SCENES/MOCK_DEVICES and the
+// mock fallbacks below once that endpoint is available.
+// ---------------------------------------------------------------------------
+const MOCK_SCENES = [
+    {
+        ruleId: 'mock-1',
+        ruleName: 'My Morning',
+        roomName: 'Living Room',
+        fromTime: '6:30 am',
+        toTime: '10:29 pm',
+        enabled: true,
+        days: ['MONDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'],
+    },
+    {
+        ruleId: 'mock-2',
+        ruleName: 'My Morning',
+        roomName: 'Living Room',
+        fromTime: '6:30 am',
+        toTime: '10:29 pm',
+        enabled: true,
+        days: ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'],
+    },
+];
+
+const MOCK_DEVICES = [
+    { roomName: 'Living Room', status: true },
+];
+
+const ALL_DAYS = [
+    { short: 'Sun', full: 'SUNDAY' },
+    { short: 'Mon', full: 'MONDAY' },
+    { short: 'Tue', full: 'TUESDAY' },
+    { short: 'Wed', full: 'WEDNESDAY' },
+    { short: 'Thu', full: 'THURSDAY' },
+    { short: 'Fri', full: 'FRIDAY' },
+    { short: 'Sat', full: 'SATURDAY' },
+];
 
 export default function YourScenes() {
     const [scenes, setScenes] = useState([]);
@@ -18,8 +59,10 @@ export default function YourScenes() {
             navigate('/');
             return;
         }
-        // No backend endpoint exists for rules/scenes at all (no /user/rule, no RuleController)
-        setScenes([]);
+        // TODO(API): No backend endpoint exists for rules/scenes yet (no /user/rule,
+        // no RuleController). Using MOCK_SCENES as a placeholder so the UI can be
+        // built/reviewed now. Swap this for the real fetch below once it exists.
+        setScenes(MOCK_SCENES);
         // try {
         //     const { data, status } = await axiosInstance.get(`${process.env.REACT_APP_API_URL}/user/rule`,
         //         { headers: { Authorization: `Bearer ${sessionId}` } }
@@ -38,8 +81,9 @@ export default function YourScenes() {
             navigate('/');
             return;
         }
-        // No backend endpoint exists for device/"thing" listing yet (no /user/thing)
-        setDevices([]);
+        // TODO(API): No backend endpoint exists for device/"thing" listing yet
+        // (no /user/thing). Using MOCK_DEVICES as a placeholder.
+        setDevices(MOCK_DEVICES);
         // try {
         //     const { data, status } = await axiosInstance.get(`${process.env.REACT_APP_API_URL}/user/thing`,
         //         { headers: { Authorization: `Bearer ${sessionId}` } }
@@ -67,10 +111,6 @@ export default function YourScenes() {
     useEffect(() => {
         fetchScene();
         fetchDevice();
-        // const intervalId = setInterval(() => {
-        //     fetchDevice();
-        // }, 3000);
-        // return () => clearInterval(intervalId);
     }, [fetchDevice, fetchScene]);
 
     return (
@@ -78,8 +118,7 @@ export default function YourScenes() {
             <div className='container px-5 py-4'>
 
                 <div className='d-flex justify-content-between align-items-center mb-3'>
-                    <div style={{ fontSize: '24px', lineHeight: '100%', letterSpacing: '0' }}>Your Schedule</div>
-                    <Link className='btn btn-dark' to={'/schedule/create_schedule'}>Create Schedule</Link>
+                    <div style={{ fontSize: '24px', lineHeight: '100%', letterSpacing: '0' }}>Your Scenes</div>
                 </div>
 
                 {/* Content */}
@@ -99,13 +138,12 @@ export default function YourScenes() {
                                         <div className="d-flex flex-column border rounded p-3"
                                             style={{ backgroundColor: '#ffffff', width: '100%', height: '168px', cursor: 'pointer' }}
                                             onClick={() => {
-                                                console.log('Navigating to scene:', scenesObj);
                                                 navigate(`/schedule/update_schedule/${scenesObj.ruleId}`, { state: { scene: scenesObj } });
                                             }}>
 
                                             <div className="d-flex justify-content-between align-items-center mb-2">
 
-                                                <div>
+                                                <div style={{ fontSize: '14px' }}>
                                                     <span className='fw-bold'>{scenesObj.ruleName}</span> - {scenesObj.roomName}
                                                 </div>
 
@@ -119,17 +157,18 @@ export default function YourScenes() {
                                                         onChange={async (e) => {
                                                             e.stopPropagation();
                                                             const newEnabled = e.target.checked;
-                                                            // No backend endpoint exists for rules/scenes (no /user/rule/toggle)
-                                                            console.warn('Rule toggling is not implemented on the backend yet:', scenesObj.ruleId, newEnabled);
+                                                            // TODO(API): No backend endpoint exists for toggling rules/scenes
+                                                            // (no /user/rule/toggle). Updating local state only for now so the
+                                                            // toggle is visually functional against the mock data.
+                                                            setScenes(prevScenes =>
+                                                                prevScenes.map(scene =>
+                                                                    scene.ruleId === scenesObj.ruleId ? { ...scene, enabled: newEnabled } : scene
+                                                                )
+                                                            );
                                                             // try {
                                                             //     await axiosInstance.patch(`${process.env.REACT_APP_API_URL}/user/rule/toggle`,
                                                             //         { ruleId: scenesObj.ruleId, enable: newEnabled },
                                                             //         { headers: { Authorization: `Bearer ${sessionId}` } }
-                                                            //     );
-                                                            //     setScenes(prevScenes =>
-                                                            //         prevScenes.map(scene =>
-                                                            //             scene.ruleId === scenesObj.ruleId ? { ...scene, enabled: newEnabled } : scene
-                                                            //         )
                                                             //     );
                                                             // } catch (err) {
                                                             //     const errorMessage = err.response?.data?.message || 'Failed to update rule';
@@ -147,35 +186,38 @@ export default function YourScenes() {
 
                                             </div>
 
-                                            <div className="text-muted mb-2">
+                                            <div className="text-muted mb-2" style={{ fontSize: '13px' }}>
                                                 {scenesObj.fromTime} to {scenesObj.toTime}
                                             </div>
 
                                             <div className="d-flex flex-wrap justify-content-between align-items-center mb-2">
 
                                                 <div className='d-flex flex-column justify-content-center align-items-center bg-eaeaea rounded p-2'>
-                                                    <FaRegLightbulb className='text-muted mb-1' style={{ width: '30px', height: '30px' }} />
-                                                    <div className='d-flex justify-content-center align-items-center'>
+                                                    <FaRegLightbulb className='text-muted mb-1' style={{ width: '24px', height: '24px' }} />
+                                                    <div className='d-flex justify-content-center align-items-center' style={{ fontSize: '12px' }}>
                                                         <FiPower className='mx-1' />
                                                         <div className='mx-1'>
                                                             {(() => {
                                                                 const device = devices.find(dev =>
                                                                     dev.roomName === scenesObj.roomName
                                                                 );
-                                                                return device?.status ? 'ON' : 'OFF';
+                                                                return device?.status ? 'On' : 'Off';
                                                             })()}
                                                         </div>
                                                     </div>
                                                 </div>
 
                                                 <div className='d-flex gap-1'>
-                                                    {scenesObj.days.map((dayObj, index) => (
-                                                        <React.Fragment key={index}>
-                                                            <span className="d-flex justify-content-center align-items-center rounded-circle bg-dark text-white" style={{ height: '35px', width: '35px', fontSize: '12px' }}>
-                                                                {dayObj.charAt(0) + dayObj.slice(1).toLowerCase().slice(0, 2)}
+                                                    {ALL_DAYS.map(({ short, full }) => {
+                                                        const isActive = scenesObj.days.includes(full);
+                                                        return (
+                                                            <span key={full}
+                                                                className={`d-flex justify-content-center align-items-center rounded-circle ${isActive ? 'bg-dark text-white' : 'bg-eaeaea text-muted'}`}
+                                                                style={{ height: '30px', width: '30px', fontSize: '10px' }}>
+                                                                {short}
                                                             </span>
-                                                        </React.Fragment>
-                                                    ))}
+                                                        );
+                                                    })}
                                                 </div>
 
                                             </div>

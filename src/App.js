@@ -21,6 +21,10 @@ import DevicesLayout from './components/layout/DevicesLayout';
 import AllDevicesContent from './components/content/AllDevicesContent';
 import SearchBindingsContent from './components/content/SearchBindingsContent';
 import UpdateSceneContent from './components/content/UpdateScenesContent';
+import PowerConsumptionLayout from './components/layout/PowerConsumptionLayout';
+import PowerConsumptionContent from './components/content/PowerConsumptionContent';
+import AnalyticsLayout from './components/layout/AnalyticsLayout';
+import AnalyticsContent from './components/content/AnalyticsContent';
 
 function App() {
   return (
@@ -47,12 +51,18 @@ function App() {
 
             {/* Devices */}
             <Route path='/devices/all_devices' element={<DevicesLayout activePage={'All Devices'} InsideContent={AllDevicesContent} />} />
-            <Route path='/devices/search_bindings' element={<DevicesLayout activePage={'Search Bindings'} InsideContent={SearchBindingsContent} />} />
+            <Route path='/devices/scan_devices' element={<DevicesLayout activePage={'Scan Devices'} InsideContent={SearchBindingsContent} />} />
 
             {/* Schedule */}
-            <Route path='/schedule/your_schedule' element={<ScheduleLayout activePage={'Your Schedule'} InsideContent={YourScenesContent} />} />
-            <Route path='/schedule/create_schedule' element={<ScheduleLayout activePage={'Create Schedule'} InsideContent={CreateScenesContent} />} />
-            <Route path="/schedule/update_schedule/:id" element={<ScheduleLayout activePage={'Create Schedule'} InsideContent={UpdateSceneContent} />} />
+            <Route path='/schedule/your_schedule' element={<ScheduleLayout activePage={'Your Scenes'} InsideContent={YourScenesContent} />} />
+            <Route path='/schedule/create_schedule' element={<ScheduleLayout activePage={'Create Scenes'} InsideContent={CreateScenesContent} />} />
+            <Route path="/schedule/update_schedule/:id" element={<ScheduleLayout activePage={'Create Scenes'} InsideContent={UpdateSceneContent} />} />
+
+            {/* Power Consumption */}
+            <Route path='/power_consumption' element={<PowerConsumptionLayout InsideContent={PowerConsumptionContent} />} />
+
+            {/* Analytics */}
+            <Route path='/analytics' element={<AnalyticsLayout InsideContent={AnalyticsContent} />} />
 
             {/* Settings */}
             <Route path='/settings/profile' element={<SettingsLayout activePage={'Profile'} InsideContent={ProfileContent} />} />

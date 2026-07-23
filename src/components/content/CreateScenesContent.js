@@ -3,13 +3,25 @@ import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../../util/AxiosInstance';
 import ModalLayout from '../layout/ModalLayout';
 
+// ---------------------------------------------------------------------------
+// MOCK DATA (placeholder only)
+// TODO(API): No backend endpoint exists yet for listing devices/"things"
+// (no /user/thing). Replace MOCK_DEVICE_LIST with the real fetched list once
+// that endpoint is available - see the commented fetch below.
+// ---------------------------------------------------------------------------
+const MOCK_DEVICE_LIST = [
+    { thingId: 'mock-device-1', label: 'Smart Bulb' },
+    { thingId: 'mock-device-2', label: 'Smart Fan Controller' },
+    { thingId: 'mock-device-3', label: 'Smart Lock' },
+    { thingId: 'mock-device-4', label: 'Android TV' },
+];
+
 export default function CreateScenesContent() {
     const [deviceList, setDeviceList] = useState([]);
     const [roomList, setRoomList] = useState([]);
-    const [ruleName, setRuleName] = useState('');
     const [fromTime, setFromTime] = useState('');
     const [toTime, setToTime] = useState('');
-    const [selectedDays, setSelectedDays] = useState([]);
+    const [selectedDays, setSelectedDays] = useState(['MONDAY']);
     const [room, setRoom] = useState('');
     const [device, setDevice] = useState('');
     const [command, setCommand] = useState('ON');
@@ -43,8 +55,11 @@ export default function CreateScenesContent() {
                 const errorMessage = err.response?.data?.error || 'Failed to fetch room';
                 console.error(errorMessage);
             }
-            // No backend endpoint exists for device/"thing" listing yet (no /user/thing)
-            setDeviceList([]);
+            // TODO(API): No backend endpoint exists for device/"thing" listing yet
+            // (no /user/thing). Using MOCK_DEVICE_LIST as a placeholder so the
+            // dropdown has selectable options. Swap for the real fetch below once
+            // that endpoint is available.
+            setDeviceList(MOCK_DEVICE_LIST);
             // try {
             //     const response2 = await axiosInstance.get('/user/thing');
             //     if (response2.status === 200) {
@@ -80,7 +95,6 @@ export default function CreateScenesContent() {
             return;
         }
         const payload = {
-            ruleName,
             fromTime,
             toTime,
             days: selectedDays,
@@ -89,6 +103,10 @@ export default function CreateScenesContent() {
             command,
         };
 
+        // TODO(API): No backend endpoint exists yet for creating rules/scenes
+        // (no POST /user/rule). Replace this placeholder with the real request
+        // below once that endpoint is available.
+        console.warn('Create scene is not implemented on the backend yet. Payload was:', payload);
         setModal({
             show: true,
             title: 'Not available',
@@ -97,7 +115,7 @@ export default function CreateScenesContent() {
             onConfirm: () => setModal({ ...modal, show: false }),
         })
         // try {
-        //     const { data, status } = await axios.post(`${process.env.REACT_APP_API_URL}/user/rule`, payload,
+        //     const { data, status } = await axiosInstance.post(`${process.env.REACT_APP_API_URL}/user/rule`, payload,
         //         { headers: { Authorization: `Bearer ${sessionId}` } }
         //     );
         //     if (status === 200) {
@@ -124,47 +142,51 @@ export default function CreateScenesContent() {
         // }
     };
 
+    const selectStyle = {
+        backgroundColor: '#eaeaea',
+        border: 'none',
+        borderRadius: '6px',
+    };
+
     return (
         <>
             <div className='container px-5 py-4'>
 
-                <div style={{ fontSize: '24px', lineHeight: '100%', letterSpacing: '0' }} className='mb-3'>Create Schedule</div>
+                <div style={{ fontSize: '24px', lineHeight: '100%', letterSpacing: '0' }} className='mb-4'>Create Scenes</div>
 
                 {/* Content */}
-                <div style={{ width: '100%', overflowX: 'hidden', height: '300px', overflowY: 'auto' }}>
+                <div style={{ width: '100%', maxWidth: '620px' }}>
 
-                    <div className="mb-2">
-                        <div className="form-label">Name</div>
-                        <input type='text' id='ruleName' className="form-control" value={ruleName} onChange={e => setRuleName(e.target.value)} required />
-                    </div>
-
-                    <div className="mb-2">
-                        <div className="form-label">Time</div>
-                        <div className="d-flex gap-2">
-                            <input type="time" id='time' className="form-control" value={fromTime} onChange={e => setFromTime(e.target.value)} required />
-                            <span className="align-self-center">To</span>
-                            <input type="time" id='time' className="form-control" value={toTime} onChange={e => setToTime(e.target.value)} required />
+                    <div className="mb-4">
+                        <div className="form-label fw-bold">Time</div>
+                        <div className="d-flex align-items-center gap-3">
+                            <input type="time" id='fromTime' className="form-control py-2" style={selectStyle}
+                                placeholder="Start Time" value={fromTime} onChange={e => setFromTime(e.target.value)} required />
+                            <span>To</span>
+                            <input type="time" id='toTime' className="form-control py-2" style={selectStyle}
+                                placeholder="End Time" value={toTime} onChange={e => setToTime(e.target.value)} required />
                         </div>
                     </div>
 
-                    <div className="mb-2">
-                        <div className="form-label">Days</div>
+                    <div className="mb-4">
+                        <div className="form-label fw-bold">Day</div>
                         <div className="d-flex flex-wrap gap-2">
                             {days.map(({ short, full }) => (
                                 <button
                                     key={full}
-                                    className={`btn border border-dark rounded-circle d-flex justify-content-center align-items-center ${selectedDays.includes(full) ? 'btn-dark text-white' : 'btn-light'}`}
+                                    type='button'
+                                    className={`btn rounded-circle d-flex justify-content-center align-items-center ${selectedDays.includes(full) ? 'btn-dark text-white' : ''}`}
                                     onClick={() => toggleDay(full)}
-                                    style={{ height: '35px', width: '35px', fontSize: '12px' }}>
+                                    style={selectedDays.includes(full) ? { height: '38px', width: '38px', fontSize: '12px' } : { height: '38px', width: '38px', fontSize: '12px', backgroundColor: '#eaeaea', color: '#1C1C1E' }}>
                                     {short}
                                 </button>
                             ))}
                         </div>
                     </div>
 
-                    <div className="mb-2">
-                        <div className="form-label">Device</div>
-                        <select className="form-select" id='label' value={device} onChange={e => setDevice(e.target.value)} required>
+                    <div className="mb-4">
+                        <div className="form-label fw-bold">Devices</div>
+                        <select className="form-select py-2" style={selectStyle} id='device' value={device} onChange={e => setDevice(e.target.value)} required>
                             <option value="">Select Device</option>
                             {deviceList.map((deviceListObj, index) => (
                                 <option key={index} value={deviceListObj.thingId}>{deviceListObj.label}</option>
@@ -172,9 +194,9 @@ export default function CreateScenesContent() {
                         </select>
                     </div>
 
-                    <div className="mb-2">
-                        <div className="form-label">Room</div>
-                        <select className="form-select" id='room' value={room} onChange={e => setRoom(e.target.value)} required>
+                    <div className="mb-4">
+                        <div className="form-label fw-bold">Rooms</div>
+                        <select className="form-select py-2" style={selectStyle} id='room' value={room} onChange={e => setRoom(e.target.value)} required>
                             <option value="">Select Room</option>
                             {roomList.map((roomListObj, index) => (
                                 <option key={index} value={roomListObj.roomId}>{roomListObj.roomName}</option>
@@ -182,14 +204,27 @@ export default function CreateScenesContent() {
                         </select>
                     </div>
 
-                    <div className="mb-2">
-                        <div className="d-block form-label">Condition</div>
-                        <button className='btn btn-dark' onClick={() => setCommand('ON')}>On</button>
+                    <div className="mb-4">
+                        <div className="form-label fw-bold">Condition</div>
+                        <div className="d-inline-flex rounded-3 overflow-hidden" style={{ border: '1px solid #eaeaea' }}>
+                            <button type='button'
+                                className='btn rounded-0 px-4'
+                                style={command === 'ON' ? { backgroundColor: '#1C1C1E', color: '#fff' } : { backgroundColor: '#fff', color: '#1C1C1E' }}
+                                onClick={() => setCommand('ON')}>
+                                On
+                            </button>
+                            <button type='button'
+                                className='btn rounded-0 px-4'
+                                style={command === 'OFF' ? { backgroundColor: '#1C1C1E', color: '#fff' } : { backgroundColor: '#fff', color: '#1C1C1E' }}
+                                onClick={() => setCommand('OFF')}>
+                                Off
+                            </button>
+                        </div>
                     </div>
                 </div>
 
-                <div className='text-end my-5'>
-                    <button className="btn btn-dark" onClick={handleSubmit}>Submit</button>
+                <div className='text-end my-4'>
+                    <button className="btn btn-dark px-4 py-2" style={{ fontSize: '13px', letterSpacing: '0.5px' }} onClick={handleSubmit}>SUBMIT</button>
                 </div>
             </div>
 

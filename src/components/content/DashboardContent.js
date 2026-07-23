@@ -6,6 +6,7 @@ import axiosInstance from '../../util/AxiosInstance';
 import PairAgentModal from '../layout/PairAgentModal';
 import AgentOnlineImg from '../../assets/AgentOnlineImg.png';
 import AgentOfflineImg from '../../assets/AgentOfflineImg.png';
+import { clear } from '@testing-library/user-event/dist/clear';
 
 export default function DashboardPage() {
     const [rooms, setRooms] = useState([]);
@@ -14,7 +15,7 @@ export default function DashboardPage() {
     const [showPairModal, setShowPairModal] = useState(false);
     const navigate = useNavigate();
     const userData = useSelector((state) => state.user);
-    const [ connectionStatus, setConnectionStatus] = useState(null);
+    const [connectionStatus, setConnectionStatus] = useState(null);
 
     const fetchAgentStatus = useCallback(async () => {
         try {
@@ -41,7 +42,11 @@ export default function DashboardPage() {
 
     useEffect(() => {
         checkAgentPairing();
-    }, [checkAgentPairing]);
+        fetchAgentStatus();
+
+        const intervalId = setInterval(fetchAgentStatus, 5000);
+        return () => clearInterval(intervalId);
+    }, [checkAgentPairing, fetchAgentStatus]);
 
     //  const fetchAgent = useCallback(async () => {
     //     const sessionId = localStorage.getItem('sessionId');
@@ -95,21 +100,23 @@ export default function DashboardPage() {
 
                 {/* Agent Online/Offline Status Card */}
                 {connectionStatus && (
-                    <div className="bg-ffffff border rounded p-4 mb-4 d-flex justify-content-between align-items-start">
-                        <div style={{ fontWeight: '700', fontSize: '18px' }}>
-                            The Agent is {connectionStatus === 'LINKED' ? 'Online' : 'Offline'}
+                    <div className="bg-ffffff border rounded p-4 mb-4">
+                        <div className='d-flex justify-content-between align-item-center'>
+                            <div style={{ fontWeight: '700', fontSize: '18px' }}>
+                                The Agent is {connectionStatus === 'LINKED' ? 'Online' : 'Offline'}
+                            </div>
+                            <span
+                                className="px-3 py-1 rounded-pill"
+                                style={{
+                                    fontWeight: '600',
+                                    fontSize: '13px',
+                                    color: connectionStatus === 'LINKED' ? '#0a7a2f' : '#b30000',
+                                    backgroundColor: connectionStatus === 'LINKED' ? '#d7f5df' : '#fbd6d6',
+                                }}
+                            >
+                                {connectionStatus === 'LINKED' ? 'Online' : 'Offline'}
+                            </span>
                         </div>
-                        <span
-                            className="px-3 py-1 rounded-pill"
-                            style={{
-                                fontWeight: '600',
-                                fontSize: '13px',
-                                color: connectionStatus === 'LINKED' ? '#0a7a2f' : '#b30000',
-                                backgroundColor: connectionStatus === 'LINKED' ? '#d7f5df' : '#fbd6d6',
-                            }}
-                        >
-                            {connectionStatus === 'LINKED' ? 'Online' : 'Offline'}
-                        </span>
                         <div className="w-100 d-flex justify-content-center mt-4">
                             <img
                                 src={connectionStatus === 'LINKED' ? AgentOnlineImg : AgentOfflineImg}

@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { MdHome, MdDevices, MdSchedule, MdSmartToy } from 'react-icons/md';
+import { MdHome, MdDevices, MdSchedule, MdSmartToy, MdOutlineBarChart } from 'react-icons/md';
 import { FaDoorOpen } from 'react-icons/fa';
-import { FiSettings } from 'react-icons/fi';
+import { FiSettings, FiZap } from 'react-icons/fi';
 import axiosInstance from '../util/AxiosInstance';
 import Profile from '../assets/Profile.png';
 import "@fontsource/roboto/300.css";
@@ -43,9 +43,11 @@ export default function SidePanel({ activePage }) {
 
     const menuItems = [
         { to: '/agent', icon: <MdHome className="me-2" />, label: 'Agent', page: 'Agent' },
-        { to: `/room/${firstRoomName}`, icon: <FaDoorOpen className="me-2" />, label: 'Rooms', page: 'Rooms' },
+        { to: `/room/${firstRoomName}`, icon: <FaDoorOpen className="me-2" />, label: 'Room', page: 'Rooms' },
         { to: '/devices/all_devices', icon: <MdDevices className="me-2" />, label: 'Devices', page: 'Devices' },
         { to: '/schedule/your_schedule', icon: <MdSchedule className="me-2" />, label: 'Schedule', page: 'Schedule' },
+        { to: '/power_consumption', icon: <FiZap className="me-2" />, label: 'Power Consumption', page: 'Power Consumption' },
+        { to: '/analytics', icon: <MdOutlineBarChart className="me-2" />, label: 'Analytics', page: 'Analytics' },
         { to: '/settings/profile', icon: <FiSettings className="me-2" />, label: 'Settings', page: 'Settings' }
     ];
 

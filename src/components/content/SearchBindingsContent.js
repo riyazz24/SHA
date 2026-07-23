@@ -152,17 +152,17 @@ export default function SearchBindingsContent() {
         <>
             <div className='container px-5 py-4'>
 
-                <div style={{ fontSize: '24px', lineHeight: '100%', letterSpacing: '0' }} className='mb-3'>Search Bindings</div>
+                <div style={{ fontSize: '24px', lineHeight: '100%', letterSpacing: '0' }} className='mb-3'>Scan Devices</div>
 
                 <div style={{ width: '100%', overflowX: 'hidden', height: '300px', overflowY: 'auto' }}>
 
                     {/* Binding selection dropdown */}
                     <div className='mb-3'>
 
-                        <div className='form-label fw-bold'>Bindings</div>
+                        <div className='form-label fw-bold'>Device Brand</div>
 
                         <div className='position-relative'>
-                            <button type='button' onClick={() => setIsOpen(!isOpen)} className='form-select text-start py-2'>{selectedBinding || '--Select--'}</button>
+                            <button type='button' onClick={() => setIsOpen(!isOpen)} className='form-select text-start py-2'>{selectedBinding || 'Select Options'}</button>
                             {isOpen && (
                                 <ul className='list-group position-absolute mt-1 w-100 shadow' style={{ zIndex: 10, maxHeight: '200px', overflowY: 'auto' }}>
                                     {bindings.map((bindingsObj, index) => (
