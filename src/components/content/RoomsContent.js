@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { FaTrash, FaPlus } from 'react-icons/fa';
 import { FiMonitor, FiSearch } from 'react-icons/fi';
 import { BsThreeDotsVertical } from 'react-icons/bs';
@@ -18,9 +18,16 @@ const customStyle2 = { fontWeight: '600', fontSize: '14px', lineHeight: '100%', 
 //     </div>
 // );
 
-export default function RoomsContent({ roomName, onRoomAdded }) {
+export default function RoomsContent({ roomName: roomNameProp, onRoomAdded }) {
+    const { roomName: roomNameParam } = useParams();
+    // Prefer the prop (kept for backward compatibility) and fall back to the
+    // route param, formatted the same way App.js's DynamicRoom used to do it.
+    const roomName = roomNameProp || (roomNameParam
+        ? roomNameParam.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
+        : '');
     const [devices, setDevices] = useState([]);
     const [hasRoom, setHasRoom] = useState(false);
+    const [loadingRoom, setLoadingRoom] = useState(true);
     const [roomList, setRoomList] = useState([]);
     const [showAddRoomModal, setShowAddRoomModal] = useState(false);
     const [showRoomMenu, setShowRoomMenu] = useState(false);
@@ -81,6 +88,8 @@ export default function RoomsContent({ roomName, onRoomAdded }) {
             setRoomList([]);
             const errorMessage = err.response?.data?.message || 'Failed to fetch room';
             console.error(errorMessage);
+        } finally {
+            setLoadingRoom(false);
         }
     }, [navigate, roomName]);
 
@@ -343,14 +352,20 @@ export default function RoomsContent({ roomName, onRoomAdded }) {
             <div className="container px-5 py-4">
 
                 {/* Breadcrumb */}
-                <div className="bg-light rounded p-3 mb-3">
+                {/* <div className="bg-light rounded p-3 mb-3">
                     <span className="text-muted">All Rooms</span>
                     <span className="text-muted mx-2">&gt;</span>
-                    <span style={{ fontWeight: 700 }}>{hasRoom ? roomName : capitalize(newRoomName) || roomName}</span>
-                </div>
+                    <span style={{ fontWeight: 700 }}>{loadingRoom ? roomName : (hasRoom ? roomName : (capitalize(newRoomName) || roomName))}</span>
+                </div> */}
 
                 <div className="bg-white rounded p-4">
-                    {hasRoom ? (
+                    {loadingRoom ? (
+                        <div className="d-flex justify-content-center align-items-center py-5" style={{ minHeight: '300px' }}>
+                            <div className="spinner-border text-secondary" role="status">
+                                <span className="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    ) : hasRoom ? (
                         <>
                             <div className="d-flex justify-content-between align-items-center mb-3">
                                 <div style={{ fontSize: '24px', lineHeight: '100%', letterSpacing: '0' }}>{roomName}</div>

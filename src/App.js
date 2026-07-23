@@ -59,10 +59,10 @@ function App() {
             <Route path="/schedule/update_schedule/:id" element={<ScheduleLayout activePage={'Create Scenes'} InsideContent={UpdateSceneContent} />} />
 
             {/* Power Consumption */}
-            <Route path='/power_consumption' element={<PowerConsumptionLayout InsideContent={PowerConsumptionContent} />} />
+            {/* <Route path='/power_consumption' element={<PowerConsumptionLayout InsideContent={PowerConsumptionContent} />} /> */}
 
             {/* Analytics */}
-            <Route path='/analytics' element={<AnalyticsLayout InsideContent={AnalyticsContent} />} />
+            {/* <Route path='/analytics' element={<AnalyticsLayout InsideContent={AnalyticsContent} />} /> */}
 
             {/* Settings */}
             <Route path='/settings/profile' element={<SettingsLayout activePage={'Profile'} InsideContent={ProfileContent} />} />
@@ -81,7 +81,7 @@ function DynamicRoom() {
   const { roomName } = useParams();
   const formattedRoomName = roomName.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
   return (
-    <RoomsLayout roomName={formattedRoomName} InsideContent={(props) => <RoomsContent {...props} roomName={formattedRoomName} />} />
+    <RoomsLayout roomName={formattedRoomName} InsideContent={RoomsContent} />
   );
 }
 
@@ -94,5 +94,3 @@ function DynamicRoom() {
 // }
 
 export default App;
-
- 

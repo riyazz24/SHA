@@ -46,8 +46,8 @@ export default function SidePanel({ activePage }) {
         { to: `/room/${firstRoomName}`, icon: <FaDoorOpen className="me-2" />, label: 'Room', page: 'Rooms' },
         { to: '/devices/all_devices', icon: <MdDevices className="me-2" />, label: 'Devices', page: 'Devices' },
         { to: '/schedule/your_schedule', icon: <MdSchedule className="me-2" />, label: 'Schedule', page: 'Schedule' },
-        { to: '/power_consumption', icon: <FiZap className="me-2" />, label: 'Power Consumption', page: 'Power Consumption' },
-        { to: '/analytics', icon: <MdOutlineBarChart className="me-2" />, label: 'Analytics', page: 'Analytics' },
+        // { to: '/power_consumption', icon: <FiZap className="me-2" />, label: 'Power Consumption', page: 'Power Consumption' },
+        // { to: '/analytics', icon: <MdOutlineBarChart className="me-2" />, label: 'Analytics', page: 'Analytics' },
         { to: '/settings/profile', icon: <FiSettings className="me-2" />, label: 'Settings', page: 'Settings' }
     ];
 
